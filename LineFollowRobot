@@ -99,14 +99,14 @@ void printValues(unsigned int s[NUM_SENSORS]){
     for(int i = angulo; i > 65 ; i--){
       angulo = i; 
       servoMotor.write(angulo);
-      delay(100);        
+      delay(10);        
     }
     
   }else if ((s[0]>=line) && (s[1]<line)){
     for(int i = angulo; i < 115 ; i++){
       angulo = i;
       servoMotor.write(angulo); 
-      delay(100);        
+      delay(10);        
     }   
     
     //angulo = 115;  // Mais a direita, virar para o centro
@@ -119,13 +119,13 @@ void printValues(unsigned int s[NUM_SENSORS]){
       for(int i = angulo; i < 110 ; i++){
         angulo = i; 
         servoMotor.write(angulo);
-        delay(100);        
+        delay(10);        
       } 
     }else if(angulo > 110){
       for(int i = angulo; i < 115 ; i++){
         angulo = i; 
         servoMotor.write(angulo);
-        delay(100);        
+        delay(10);        
       }
     }
      
@@ -137,13 +137,13 @@ void printValues(unsigned int s[NUM_SENSORS]){
       for(int i = angulo; i > 90; i--){
         angulo = i; 
         servoMotor.write(angulo);
-        delay(100);        
+        delay(10);        
       }
     }else if(angulo < 90){
       for(int i = angulo; i < 90; i++){
         angulo = i; 
         servoMotor.write(angulo);
-        delay(100);        
+        delay(10);        
       }
     }
     
@@ -163,7 +163,5 @@ void calculatePID(){
   Serial.print("Erro:");
   Serial.println(angulo);
   
-  if (angulo != 90) {
-  delay(500);
-  }
+ 
 }
