@@ -17,6 +17,8 @@ float Kp = 25, Ki = 0.6, Kd = 2;
 float error = 0, P = 0, I = 0, D = 0, PID_value = 0;
 float previous_error = 0, previous_I = 0;
 int initial_motor_speed = 80;
+int outline = 0;
+int line = 1;
 
 void setup(){
   delay(500);
@@ -36,22 +38,22 @@ void loop(){
 void printValues(unsigned int s[NUM_SENSORS]){    
   if((s[0]==outline) && (s[1]==outline) && (s[2]==outline) && (s[3]==outline) && (s[4]==line)){    
     error=4;
-  }else if((sensor[0]==line)&&(sensor[1]==outline)&&(sensor[2]==outline)&&(s[4]==outline)&&(s[4]==outline)){
+  }else if((s[0]==line)&&(s[1]==outline)&&(s[2]==outline)&&(s[4]==outline)&&(s[4]==outline)){
     error=-4;   
   }
   
-  if((sensor[0]==outline)&&(sensor[1]==outline)&&(sensor[2]==outline)&&(sensor[3]==line)&&(sensor[4]==outline)){
+  if((s[0]==outline)&&(s[1]==outline)&&(s[2]==outline)&&(s[3]==line)&&(s[4]==outline)){
       error=2;
-}else if((sensor[0]==outline)&&(sensor[1]==line)&&(sensor[2]==outline)&&(sensor[3]==outline)&&(sensor[4]==outline)){
+  }else if((s[0]==outline)&&(s[1]==line)&&(s[2]==outline)&&(s[3]==outline)&&(s[4]==outline)){
     error=-2;
-}
+  }
 
-  if((sensor[0]==outline)&&(sensor[1]==outline)&&(sensor[2]==line)&&(sensor[3]==line)&&(sensor[4]==outline)){
+  if((s[0]==outline)&&(s[1]==outline)&&(s[2]==line)&&(s[3]==line)&&(s[4]==outline)){
     error=1;
-  }  else if((sensor[0]==outline)&&(sensor[1]==line)&&(sensor[2]==line)&&(sensor[3]==outline)&&(sensor[4]==outline)){
+  }  else if((s[0]==outline)&&(s[1]==line)&&(s[2]==line)&&(s[3]==outline)&&(s[4]==outline)){
     error=-1;
   }
-  if((sensor[1]==outline)&&(sensor[2]==line)&&(sensor[3]==outline)){
+  if((s[1]==outline)&&(s[2]==line)&&(s[3]==outline)){
     error=0;
   }
     
