@@ -20,14 +20,29 @@ float previous_error = 0, previous_I = 0;
 int initial_motor_speed = 80;
 long line = 300;  // Definido que está acima de 500 é a linha escura
 long angulo = 90;
+int potenciaE = 3; // Potência lado Esquerdo
+int potenciaD = 6; // Potência lado Direito
+int motorE1 = 2;  // Motor Esquerdo
+int motorE2 = 4; // Motor Esquerdo
+int motorD1 = 5; // Motor Direito
+int motorD2 = 7; // Motor Direito
+
+
+
 Servo servoMotor;
 
 
 void setup(){
-  delay(500);
   Serial.begin(9600);
-  delay(1000);
+  pinMode(motorE1, OUTPUT);
+  pinMode(motorE2, OUTPUT);
+  pinMode(motorD1, OUTPUT);
+  pinMode(motorD2, OUTPUT);
+  pinMode(potenciaE, OUTPUT);
+  pinMode(potenciaD, OUTPUT);
+
   servoMotor.attach(8);
+ 
 }
 
 
@@ -35,7 +50,15 @@ void loop(){
   qtra.read(sensorValues); 
   printValues(sensorValues);
   calculatePID();
-  Serial.println();  
+  Serial.println();
+  digitalWrite(motorD1, HIGH);
+  digitalWrite(motorD2, LOW);
+  
+  digitalWrite(motorE1, LOW);
+  digitalWrite(motorE2, HIGH);
+  
+  analogWrite(potenciaD, 40);
+  analogWrite(potenciaE, 40);
 };
 
 
@@ -125,7 +148,7 @@ void printValues(unsigned int s[NUM_SENSORS]){
     }
     
   }
-  
+ 
  
 };
 
