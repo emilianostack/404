@@ -1,9 +1,3 @@
-/*
-  PROJETO SEGUIDOR DE LINHA
-  Orientador: Manfred H. Junior
-  Centro Universitário Católica de Santa Catarina
-*/
-
 #include <QTRSensors.h>
 #include <Servo.h>
 
@@ -11,26 +5,24 @@
 #define NUM_SAMPLES_PER_SENSOR  4
 #define EMITTER_PIN             2
 
+int potenciaE = 3;
+int potenciaD = 6;
+int motorE1 = 2;
+int motorE2 = 4;
+int motorD1 = 5;
+int motorD2 = 7;
+
 QTRSensorsAnalog qtra((unsigned char[]) {0, 1, 2, 3, 4, 5}, NUM_SENSORS, NUM_SAMPLES_PER_SENSOR, EMITTER_PIN);
 unsigned int sensorValues[NUM_SENSORS];
+
+Servo servoMotor;
 
 float Kp = 25, Ki = 0.6, Kd = 2;
 float error = 0, P = 0, I = 0, D = 0, PID_value = 0;
 float previous_error = 0, previous_I = 0;
 int initial_motor_speed = 80;
-long line = 300;  // Definido que está acima de 500 é a linha escura
-long angulo = 90;
-int potenciaE = 3; // Potência lado Esquerdo
-int potenciaD = 6; // Potência lado Direito
-int motorE1 = 2;  // Motor Esquerdo
-int motorE2 = 4; // Motor Esquerdo
-int motorD1 = 5; // Motor Direito
-int motorD2 = 7; // Motor Direito
 
-
-
-Servo servoMotor;
-
+const int line = 100;
 
 void setup(){
   Serial.begin(9600);
@@ -40,118 +32,44 @@ void setup(){
   pinMode(motorD2, OUTPUT);
   pinMode(potenciaE, OUTPUT);
   pinMode(potenciaD, OUTPUT);
-
+  digitalWrite(motorD1, HIGH);
+  digitalWrite(motorD2, LOW);  
+  digitalWrite(motorE1, LOW);
+  digitalWrite(motorE2, HIGH);  
   servoMotor.attach(8);
- 
+  servoMotor.write(90); 
+  delay(1000);
 }
 
 
 void loop(){
   qtra.read(sensorValues); 
   printValues(sensorValues);
-  calculatePID();
-  Serial.println();
-  digitalWrite(motorD1, HIGH);
-  digitalWrite(motorD2, LOW);
-  
-  digitalWrite(motorE1, LOW);
-  digitalWrite(motorE2, HIGH);
-  
-  analogWrite(potenciaD, 40);
-  analogWrite(potenciaE, 40);
+  //calculatePID();
+  analogWrite(potenciaD, 120);
+  analogWrite(potenciaE, 120); 
 };
 
 
-void printValues(unsigned int s[NUM_SENSORS]){    
+void printValues(unsigned int s[NUM_SENSORS]){     
+  if(s[5] > 100 && s[4] < 100 && s[3] < 100 && s[2] < 100 && s[1] < 100 && s[0] < 100){
+    servoMotor.write(60); 
+  }else if(s[5] > 100 && s[4] > 100 && s[3] < 100 && s[2] < 100 && s[1] < 100 && s[0] < 100){
+    servoMotor.write(70); 
+  }else if(s[5] < 100 && s[4] > 100 && s[3] > 100 && s[2] < 100 && s[1] < 100 && s[0] > 100){
+    servoMotor.write(80); 
+  }else if(s[5] < 100 && s[4] < 100 && s[3] > 100 && s[2] > 100 && s[1] < 100 && s[0] > 100){
+    servoMotor.write(90); 
+  }else if(s[5] < 100 && s[4] < 100 && s[3] < 100 && s[2] > 100 && s[1] > 100 && s[0] > 100){
+    servoMotor.write(100); 
+  }else if(s[5] < 100 && s[4] < 100 && s[3] < 100 && s[2] < 100 && s[1] > 100 && s[0] > 100){
+    servoMotor.write(110); 
+  }else if(s[5] < 100 && s[4] < 100 && s[3] < 100 && s[2] < 100 && s[1] < 100 && s[0] > 100){
+    servoMotor.write(120); 
+  } 
+};
+
 /*
-  Visão dos sensores no robô
-  Sensor | Angulo
-       5 = 65
-       4 = 70
-       3 = 90
-       2 = 90
-       1 = 110
-       0 = 125
-  
-  --------------------------
-  | 5  X  4  3  2  1  X  0 |
-  -------------------------- 
-          |       |
-          |       |
-*/
-
-
-  Serial.print(s[5]);  // 
-  Serial.print(" - ");
-  Serial.print(s[4]);
-  Serial.print(" - ");
-  Serial.print(s[3]);
-  Serial.print(" - ");
-  Serial.print(s[2]);
-  Serial.print(" - ");
-  Serial.print(s[1]);
-  Serial.print(" - ");
-  Serial.println(s[0]);
-    
-  if ((s[5]>=line) && (s[4]<line)){
-      
-    
-    for(int i = angulo; i > 65 ; i--){
-      angulo = i; 
-      servoMotor.write(angulo);
-      delay(10);        
-    }
-    
-  }else if ((s[0]>=line) && (s[1]<line)){
-    for(int i = angulo; i < 115 ; i++){
-      angulo = i;
-      servoMotor.write(angulo); 
-      delay(10);        
-    }   
-    
-    //angulo = 115;  // Mais a direita, virar para o centro
-  }
-  
-  if ((s[1]>=line) && (s[2]>=line)){
-    //angulo = 110;
-    
-    if(angulo < 110){
-      for(int i = angulo; i < 110 ; i++){
-        angulo = i; 
-        servoMotor.write(angulo);
-        delay(10);        
-      } 
-    }else if(angulo > 110){
-      for(int i = angulo; i < 115 ; i++){
-        angulo = i; 
-        servoMotor.write(angulo);
-        delay(10);        
-      }
-    }
-     
-  }
-  if ((s[2]>=line) && (s[3]>=line)){
-    //angulo = 90;  // Está no centro
-    
-    if(angulo > 90){
-      for(int i = angulo; i > 90; i--){
-        angulo = i; 
-        servoMotor.write(angulo);
-        delay(10);        
-      }
-    }else if(angulo < 90){
-      for(int i = angulo; i < 90; i++){
-        angulo = i; 
-        servoMotor.write(angulo);
-        delay(10);        
-      }
-    }
-    
-  }
- 
- 
-};
-
 void calculatePID(){
   P = error;
   I = I + previous_I;
@@ -159,9 +77,5 @@ void calculatePID(){
   PID_value = (Kp*P) + (Ki*I) + (Kd*D);
   previous_I=I;
   previous_error=error;
-  
-  Serial.print("Erro:");
-  Serial.println(angulo);
-  
- 
 }
+*/
